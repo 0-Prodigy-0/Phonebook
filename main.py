@@ -1,12 +1,15 @@
 import json
+import os
 
 filename = "phonebook.json"
+base_path = os.path.dirname(os.path.abspath(__file__))
+filepath = os.path.join(base_path, filename)
 
 try:    
-    with open(filename, "r") as f:
+    with open(filepath, "r") as f:
         data = json.load(f)
 except FileNotFoundError:
-    with open(filename, "w") as f:
+    with open(filepath, "w") as f:
         json.dump({"contacts":[]}, f)
 
 def add_Contact():
@@ -15,21 +18,18 @@ def add_Contact():
     person["phone"] = input("Contact phone number: ").lower()
     person["email"] = input("Contact email: ").lower()
     try:
-        with open(filename, "r") as f:
+        with open(filepath, "r") as f:
             data = json.load(f)
-    except FileNotFoundError:
+    except (FileNotFoundError, json.JSONDecodeError):
         data = {"contacts": []}
-    except json.JSONDecodeError:
-        print("Contacts file is corrupted!")
-        return
     data["contacts"].append(person)
-    with open(filename, "w") as f:
+    with open(filepath, "w") as f:
         json.dump(data, f, indent=4)
     print(f"{person['name']} added to your contacts")
 
 def view_contacts():
     try:
-        with open(filename, "r") as f:
+        with open(filepath, "r") as f:
             data = json.load(f)
         contacts = data["contacts"]
         if len(contacts) == 0:
@@ -48,7 +48,7 @@ def view_contacts():
 
 def search_Contact():
     try:
-        with open(filename, "r") as f:
+        with open(filepath, "r") as f:
             data = json.load(f)
         contact_Name = input("Enter contact name: ").lower()
         found = False
@@ -65,7 +65,7 @@ def search_Contact():
 
 def delete_contact():
     try:
-        with open(filename, "r") as f:
+        with open(filepath, "r") as f:
             data = json.load(f)
         contacts = data["contacts"]
         if len(contacts) == 0:
@@ -80,7 +80,7 @@ def delete_contact():
             return
         removed = contacts.pop(choice - 1)
         data["contacts"] = contacts
-        with open(filename, "w") as f:
+        with open(filepath, "w") as f:
             json.dump(data, f, indent=4)
         print(f"\n🗑️ '{removed['name']}' has been deleted!")
     except FileNotFoundError:
@@ -93,10 +93,10 @@ def delete_contact():
 def update_Contact():
     def save():
         data['contacts'] = contacts
-        with open(filename, "w") as f:
+        with open(filepath, "w") as f:
             json.dump(data, f, indent=4)
     try:
-        with open(filename, "r") as f:
+        with open(filepath, "r") as f:
             data = json.load(f)
         contacts = data["contacts"]
         print("\n📒 Your contacts:\n")
