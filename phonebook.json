@@ -1,0 +1,9 @@
+{
+    "contacts": [
+        {
+            "name": "john doe",
+            "phone": "9876543210",
+            "email": "johndoe@email.com"
+        }
+    ]
+}
